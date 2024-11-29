@@ -1,70 +1,100 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default async function Cursos() {
-  const cursos = [
-    {
-      id: 1,
-      name: "Introducción a la comida Vegana",
-      slug: "introduccion-comida-vegana",
-      description:
-        "En este curso aprenderás los principios básicos de la comida vegana, incluyendo los beneficios para la salud y el medio ambiente, y cómo crear deliciosas recetas veganas para cada comida.",
-      imageUrl: "https://picsum.photos/200/300",
-      duracion: "3 meses",
-    },
-    {
-      id: 2,
-      name: "Nutrición y Bienestar Vegano",
-      slug: "nutricion-bienestar-vegano",
-      description:
-        "Este curso se enfoca en cómo llevar una dieta vegana equilibrada, cubriendo nutrientes esenciales, planificación de comidas y cómo optimizar tu salud a través de la nutrición basada en plantas.",
-      imageUrl: "https://picsum.photos/200/300",
-      duracion: "2 meses",
-    },
-    {
-      id: 3,
-      name: "Cocina Vegana Avanzada",
-      slug: "avanzado-vegano",
-      description:
-        "Un curso diseñado para aquellos que ya tienen experiencia en la cocina vegana. Aprenderás técnicas avanzadas de preparación, presentación y cómo crear platos veganos gourmet.",
-      imageUrl: "https://picsum.photos/200/300",
-      duracion: "4 meses",
-    },
-  ];
+export const metadata = {
+  title: "Cursos | AINBH",
+  description: "Conoce más sobre nuestros cursos, enfocados en una nutrición vegana saludable y sostenible.",
+  openGraph: {
+    title: "Cursos | AINBH",
+    description: "Explora nuestra oferta educativa sobre nutrición y cocina vegana.",
+    url: "https://tu-sitio.com/cursos",
+    siteName: "AINBH",
+  },
+};
 
-  //const response = await fetch("/api/cursos");
-  //const cursos = await response.json();
-  //console.log("miscursos", cursos)
+async function fetchCursos() {
+  const res = await fetch('http://localhost:3000/api/cursos'); // Asegúrate de ajustar la URL según el entorno de desarrollo
+  if (!res.ok) {
+    throw new Error('Failed to fetch cursos');
+  }
+  return res.json();
+}
+
+export default async function Cursos() {
+  const cursos = await fetchCursos(); // Obtener los datos de los cursos directamente en el servidor
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {cursos.map((curso) => (
-          <Link href={`/curso/${curso.slug}`} key={curso.id}>
-            <div
-              
-              className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105"
-            >
-              <div className="relative h-48">
-                <Image
-                  src={curso.imageUrl}
-                  alt={curso.name}
-                  layout="fill"
-                  objectFit="cover"
-                />
-              </div>
-              <div className="p-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                  {curso.name}
-                </h2>
-                <p className="text-gray-600 mb-4">{curso.description}</p>
-                <p className="text-sm text-gray-500">
-                  Duración: {curso.duracion}
-                </p>
-              </div>
-            </div>
-          </Link>
-        ))}
+    <div className="bg-gray-100 py-16">
+      {/* Título de la página */}
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">Nuestros Cursos</h1>
+        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          Explora nuestra oferta educativa sobre nutrición vegana, cocina saludable y bienestar humano.
+        </p>
+      </div>
+
+      {/* Grid de Cursos */}
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {cursos.length > 0 ? (
+            cursos.map((curso) => (
+              <Link href={`/curso/${curso.slug}`} key={curso.id}>
+                <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-all transform hover:scale-105 hover:shadow-xl">
+                  <div className="relative h-56">
+                    <Image
+                      src={curso.imageUrl}
+                      alt={curso.name}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-t-lg"
+                    />
+                  </div>
+                  <div className="p-6">
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-2">{curso.name}</h2>
+                    <p className="text-gray-600 text-base mb-4">{curso.description}</p>
+                    <div className="flex justify-between items-center text-sm text-gray-500">
+                      <p>{curso.duracion}</p>
+                      <p className="font-bold text-green-500">Desde ${curso.precio}</p>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))
+          ) : (
+            <div className="col-span-full text-center text-gray-600">No se encontraron cursos disponibles.</div>
+          )}
+        </div>
+      </div>
+
+      {/* Sección de Cursos Destacados */}
+      <div className="mt-16 text-center">
+        <h2 className="text-3xl font-bold text-gray-900 mb-8">Cursos Destacados</h2>
+        <div className="flex justify-center space-x-8">
+          {/* Curso destacado 1 */}
+          <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all w-64">
+            <Image
+              src="https://picsum.photos/300/200"
+              alt="Curso destacado"
+              width={300}
+              height={200}
+              className="rounded-lg"
+            />
+            <h3 className="text-xl font-semibold text-gray-800 mt-4">Curso de Cocina Vegana</h3>
+            <p className="text-gray-600 mt-2">Aprende a cocinar deliciosos platos veganos, llenos de nutrientes.</p>
+          </div>
+          {/* Curso destacado 2 */}
+          <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all w-64">
+            <Image
+              src="https://picsum.photos/300/200"
+              alt="Curso destacado"
+              width={300}
+              height={200}
+              className="rounded-lg"
+            />
+            <h3 className="text-xl font-semibold text-gray-800 mt-4">Nutrición Vegana para Todos</h3>
+            <p className="text-gray-600 mt-2">Conoce los fundamentos de la nutrición vegana y cómo implementarla en tu vida diaria.</p>
+          </div>
+        </div>
       </div>
     </div>
   );
