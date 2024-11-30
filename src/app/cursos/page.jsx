@@ -35,9 +35,9 @@ export default async function Cursos() {
       {/* Grid de Cursos */}
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {cursos.length > 0 ? (
+          {/*cursos.length > 0 ? (
             cursos.map((curso) => (
-              <Link href={`/curso/${curso.slug}`} key={curso.id}>
+             <Link href={`/curso/${curso.slug}`} key={curso.id}>
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-all transform hover:scale-105 hover:shadow-xl">
                   <div className="relative">
                   
@@ -51,11 +51,11 @@ export default async function Cursos() {
                     </div>
                   </div>
                 </div>
-              </Link>
+              </Link> 
             ))
           ) : (
             <div className="col-span-full text-center text-gray-600">No se encontraron cursos disponibles.</div>
-          )}
+          )*/}
         </div>
       </div>
       {/* Sección de Cursos Destacados */}
