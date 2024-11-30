@@ -13,7 +13,7 @@ export const metadata = {
 };
 
 async function fetchCursos() {
-  const res = await fetch('http://localhost:3000/api/cursos'); // Asegúrate de ajustar la URL según el entorno de desarrollo
+  const res = await fetch(`http://localhost:3000/api/cursos`); // Asegúrate de ajustar la URL según el entorno de desarrollo
   if (!res.ok) {
     throw new Error('Failed to fetch cursos');
   }
@@ -40,15 +40,15 @@ export default async function Cursos() {
               <Link href={`/curso/${curso.slug}`} key={curso.id}>
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-all transform hover:scale-105 hover:shadow-xl">
                   <div className="relative h-56">
-                    <Image
+                  <Image
                       src={curso.imageUrl}
                       alt={curso.name}
                       className="rounded-t-lg"
-                      fill
-                      sizes="100vw"
-                      style={{
-                        objectFit: "cover"
-                      }} />
+                      layout="responsive"
+                      width={700}
+                      height={400}
+                      objectFit="cover"
+                    />
                   </div>
                   <div className="p-6">
                     <h2 className="text-2xl font-semibold text-gray-800 mb-2">{curso.name}</h2>
@@ -72,16 +72,14 @@ export default async function Cursos() {
         <div className="flex justify-center space-x-8">
           {/* Curso destacado 1 */}
           <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all w-64">
-            <Image
+          <Image
               src="https://picsum.photos/300/200"
               alt="Curso destacado"
               width={300}
               height={200}
               className="rounded-lg"
-              style={{
-                maxWidth: "100%",
-                height: "auto"
-              }} />
+              layout="responsive"
+            />
             <h3 className="text-xl font-semibold text-gray-800 mt-4">Curso de Cocina Vegana</h3>
             <p className="text-gray-600 mt-2">Aprende a cocinar deliciosos platos veganos, llenos de nutrientes.</p>
           </div>
