@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/legacy/image";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
@@ -36,7 +36,7 @@ export default function Curso() {
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen py-12">
+    (<div className="bg-gray-100 min-h-screen py-12">
       <div className="max-w-5xl mx-auto px-6 bg-white rounded-lg shadow-lg overflow-hidden">
         <div className="md:flex">
           {/* Imagen del curso */}
@@ -45,10 +45,12 @@ export default function Curso() {
               <Image
                 src={data.imageUrl || "https://via.placeholder.com/400x300"}
                 alt={data.name}
-                layout="fill"
-                objectFit="cover"
                 className="rounded-md"
-              />
+                fill
+                sizes="100vw"
+                style={{
+                  objectFit: "cover"
+                }} />
             </div>
           </div>
 
@@ -140,6 +142,6 @@ export default function Curso() {
           </div>
         </div>
       </div>
-    </div>
+    </div>)
   );
 }

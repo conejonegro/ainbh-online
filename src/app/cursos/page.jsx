@@ -1,4 +1,4 @@
-import Image from "next/legacy/image";
+import Image from "next/image";
 import Link from "next/link";
 
 export const metadata = {
@@ -24,7 +24,7 @@ export default async function Cursos() {
   const cursos = await fetchCursos(); // Obtener los datos de los cursos directamente en el servidor
 
   return (
-    <div className="bg-gray-100 py-16">
+    (<div className="bg-gray-100 py-16">
       {/* Título de la página */}
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">Nuestros Cursos</h1>
@@ -32,7 +32,6 @@ export default async function Cursos() {
           Explora nuestra oferta educativa sobre nutrición vegana, cocina saludable y bienestar humano.
         </p>
       </div>
-
       {/* Grid de Cursos */}
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -44,10 +43,12 @@ export default async function Cursos() {
                     <Image
                       src={curso.imageUrl}
                       alt={curso.name}
-                      layout="fill"
-                      objectFit="cover"
                       className="rounded-t-lg"
-                    />
+                      fill
+                      sizes="100vw"
+                      style={{
+                        objectFit: "cover"
+                      }} />
                   </div>
                   <div className="p-6">
                     <h2 className="text-2xl font-semibold text-gray-800 mb-2">{curso.name}</h2>
@@ -65,7 +66,6 @@ export default async function Cursos() {
           )}
         </div>
       </div>
-
       {/* Sección de Cursos Destacados */}
       <div className="mt-16 text-center">
         <h2 className="text-3xl font-bold text-gray-900 mb-8">Cursos Destacados</h2>
@@ -78,7 +78,10 @@ export default async function Cursos() {
               width={300}
               height={200}
               className="rounded-lg"
-            />
+              style={{
+                maxWidth: "100%",
+                height: "auto"
+              }} />
             <h3 className="text-xl font-semibold text-gray-800 mt-4">Curso de Cocina Vegana</h3>
             <p className="text-gray-600 mt-2">Aprende a cocinar deliciosos platos veganos, llenos de nutrientes.</p>
           </div>
@@ -90,12 +93,15 @@ export default async function Cursos() {
               width={300}
               height={200}
               className="rounded-lg"
-            />
+              style={{
+                maxWidth: "100%",
+                height: "auto"
+              }} />
             <h3 className="text-xl font-semibold text-gray-800 mt-4">Nutrición Vegana para Todos</h3>
             <p className="text-gray-600 mt-2">Conoce los fundamentos de la nutrición vegana y cómo implementarla en tu vida diaria.</p>
           </div>
         </div>
       </div>
-    </div>
+    </div>)
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/legacy/image";
+import Image from "next/image";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
@@ -18,7 +18,7 @@ export default function LoginPage() {
   }, [status, router]);
 
   return (
-    <div className="flex min-h-screen">
+    (<div className="flex min-h-screen">
       {/* Columna izquierda con imagen */}
       <div className="hidden lg:block w-1/2 bg-gray-100">
         <Image
@@ -27,9 +27,11 @@ export default function LoginPage() {
           width={720}
           height={720}
           className="h-full w-full object-cover"
-        />
+          style={{
+            maxWidth: "100%",
+            height: "auto"
+          }} />
       </div>
-
       {/* Columna derecha con formulario */}
       <div className="flex w-full items-center justify-center lg:w-1/2 py-12 px-6 lg:px-8">
         <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-lg shadow-lg">
@@ -108,6 +110,6 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-    </div>
+    </div>)
   );
 }
