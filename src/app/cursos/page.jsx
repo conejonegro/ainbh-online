@@ -39,16 +39,8 @@ export default async function Cursos() {
             cursos.map((curso) => (
               <Link href={`/curso/${curso.slug}`} key={curso.id}>
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-all transform hover:scale-105 hover:shadow-xl">
-                  <div className="relative h-56">
-                  <Image
-                      src={curso.imageUrl}
-                      alt={curso.name}
-                      className="rounded-t-lg"
-                      layout="responsive"
-                      width={700}
-                      height={400}
-                      objectFit="cover"
-                    />
+                  <div className="relative">
+                  
                   </div>
                   <div className="p-6">
                     <h2 className="text-2xl font-semibold text-gray-800 mb-2">{curso.name}</h2>

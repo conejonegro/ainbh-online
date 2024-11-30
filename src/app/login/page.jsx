@@ -38,7 +38,7 @@ export default function LoginPage() {
           {/* Título */}
 
           {/* Botón de Google */}
-          <div className="flex flex-col items-start space-y-4">
+          <div className="flex flex-col space-y-4 items-center">
             <p className="text-lg font-semibold text-black">Iniciar sesión con Google</p>
             <button
               onClick={() => signIn("google")}
