@@ -2,6 +2,7 @@
 
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 export default function PerfilUsuario() {
   const { data: session, status } = useSession();
@@ -35,7 +36,7 @@ export default function PerfilUsuario() {
           <div className="flex flex-col items-center md:items-start md:w-1/3">
             <div className="relative w-32 h-32 mb-4">
               {/* Imagen de perfil */}
-              <img
+              <Image
                 src={session?.user?.image || "https://via.placeholder.com/150"}
                 alt="Imagen de perfil"
                 className="rounded-full w-full h-full object-cover border-4 border-green-500"
