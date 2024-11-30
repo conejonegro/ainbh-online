@@ -1,5 +1,5 @@
 import { FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn } from 'react-icons/fa';
-
+import Link from 'next/link';
 export default function Footer() {
   return (
     <footer className="bg-gray-900 text-white py-16">
@@ -9,10 +9,10 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-semibold mb-4">Enlaces Rápidos</h3>
             <ul>
-              <li><a href="/" className="text-gray-400 hover:text-white">Inicio</a></li>
-              <li><a href="/cursos" className="text-gray-400 hover:text-white">Cursos</a></li>
-              <li><a href="/nosotros" className="text-gray-400 hover:text-white">Nosotros</a></li>
-              <li><a href="/contacto" className="text-gray-400 hover:text-white">Contacto</a></li>
+              <li><Link href="/" className="text-gray-400 hover:text-white">Inicio</Link></li>
+              <li><Link href="/cursos" className="text-gray-400 hover:text-white">Cursos</Link></li>
+              <li><Link href="/nosotros" className="text-gray-400 hover:text-white">Nosotros</Link></li>
+              <li><Link href="/contacto" className="text-gray-400 hover:text-white">Contacto</Link></li>
             </ul>
           </div>
 
@@ -20,18 +20,18 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-semibold mb-4">Síguenos</h3>
             <div className="flex space-x-4">
-              <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
+              <Link href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
                 <FaFacebookF className="text-gray-400 hover:text-white text-2xl" />
-              </a>
-              <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
+              </Link>
+              <Link href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
                 <FaInstagram className="text-gray-400 hover:text-white text-2xl" />
-              </a>
-              <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer">
+              </Link>
+              <Link href="https://www.twitter.com" target="_blank" rel="noopener noreferrer">
                 <FaTwitter className="text-gray-400 hover:text-white text-2xl" />
-              </a>
-              <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
+              </Link>
+              <Link href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
                 <FaLinkedinIn className="text-gray-400 hover:text-white text-2xl" />
-              </a>
+              </Link>
             </div>
           </div>
 

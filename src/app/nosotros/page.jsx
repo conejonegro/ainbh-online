@@ -1,5 +1,5 @@
 // app/nosotros/page.js
-
+import Image from "next/image";
 export const metadata = {
   title: "Nosotros | AINBH",
   description: "Conoce más sobre nuestra misión, visión y valores en AINBH.",
@@ -70,10 +70,12 @@ export default function Nosotros() {
           <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {/* Miembro 1 */}
             <div className="bg-white p-6 rounded-lg shadow-lg">
-              <img
+              <Image
                 className="w-32 h-32 rounded-full mx-auto mb-4"
                 src="https://via.placeholder.com/150"
                 alt="Miembro 1"
+                width={300}
+                height={200}
               />
               <h3 className="text-xl font-semibold text-gray-700">Juan Pérez</h3>
               <p className="text-gray-500">Nutricionista Principal</p>
@@ -81,10 +83,12 @@ export default function Nosotros() {
 
             {/* Miembro 2 */}
             <div className="bg-white p-6 rounded-lg shadow-lg">
-              <img
+              <Image
                 className="w-32 h-32 rounded-full mx-auto mb-4"
                 src="https://via.placeholder.com/150"
                 alt="Miembro 2"
+                width={300}
+                height={200}
               />
               <h3 className="text-xl font-semibold text-gray-700">Ana Gómez</h3>
               <p className="text-gray-500">Chef Vegana</p>
@@ -92,10 +96,12 @@ export default function Nosotros() {
 
             {/* Miembro 3 */}
             <div className="bg-white p-6 rounded-lg shadow-lg">
-              <img
+              <Image
                 className="w-32 h-32 rounded-full mx-auto mb-4"
                 src="https://via.placeholder.com/150"
                 alt="Miembro 3"
+                width={300}
+                height={200}
               />
               <h3 className="text-xl font-semibold text-gray-700">Carlos Rodríguez</h3>
               <p className="text-gray-500">Asesor en Bienestar</p>
@@ -103,10 +109,12 @@ export default function Nosotros() {
 
             {/* Miembro 4 */}
             <div className="bg-white p-6 rounded-lg shadow-lg">
-              <img
+              <Image
                 className="w-32 h-32 rounded-full mx-auto mb-4"
                 src="https://via.placeholder.com/150"
                 alt="Miembro 4"
+                width={300}
+                height={200}
               />
               <h3 className="text-xl font-semibold text-gray-700">Sofía Martínez</h3>
               <p className="text-gray-500">Educadora de Salud</p>

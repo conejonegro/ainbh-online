@@ -1,5 +1,7 @@
-//import Image from "next/image";
-//import Link from "next/link";
+import Image from "next/image";
+import Link from "next/link";
+export const dynamic = 'force-dynamic'; // Evita el prerenderizado en build
+
 
 export const metadata = {
   title: "Cursos | AINBH",
@@ -12,16 +14,18 @@ export const metadata = {
   },
 };
 
-/*async function fetchCursos() {
-  const res = await fetch(`http://localhost:3000/api/cursos`); // Asegúrate de ajustar la URL según el entorno de desarrollo
+
+
+async function fetchCursos() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cursos`); // Asegúrate de ajustar la URL según el entorno de desarrollo
   if (!res.ok) {
     throw new Error('Failed to fetch cursos');
   }
   return res.json();
-}*/
+}
 
 export default async function Cursos() {
-  //const cursos = await fetchCursos(); // Obtener los datos de los cursos directamente en el servidor
+  const cursos = await fetchCursos(); // Obtener los datos de los cursos directamente en el servidor
 
   return (
     (<div className="bg-gray-100 py-16">
@@ -35,7 +39,7 @@ export default async function Cursos() {
       {/* Grid de Cursos */}
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/*cursos.length > 0 ? (
+          {cursos.length > 0 ? (
             cursos.map((curso) => (
              <Link href={`/curso/${curso.slug}`} key={curso.id}>
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-all transform hover:scale-105 hover:shadow-xl">
@@ -55,7 +59,7 @@ export default async function Cursos() {
             ))
           ) : (
             <div className="col-span-full text-center text-gray-600">No se encontraron cursos disponibles.</div>
-          )*/}
+          )}
         </div>
       </div>
       {/* Sección de Cursos Destacados */}
@@ -64,20 +68,20 @@ export default async function Cursos() {
         <div className="flex justify-center space-x-8">
           {/* Curso destacado 1 */}
           <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all w-64">
-         {/* <Image
+         { <Image
               src="https://picsum.photos/300/200"
               alt="Curso destacado"
               width={300}
               height={200}
               className="rounded-lg"
               layout="responsive"
-            /> */ }
+            />  }
             <h3 className="text-xl font-semibold text-gray-800 mt-4">Curso de Cocina Vegana</h3>
             <p className="text-gray-600 mt-2">Aprende a cocinar deliciosos platos veganos, llenos de nutrientes.</p>
           </div>
           {/* Curso destacado 2 */}
           <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all w-64">
-          {/*  <Image
+          {  <Image
               src="https://picsum.photos/300/200"
               alt="Curso destacado"
               width={300}
@@ -86,7 +90,7 @@ export default async function Cursos() {
               style={{
                 maxWidth: "100%",
                 height: "auto"
-              }} /> */}
+              }} /> }
             <h3 className="text-xl font-semibold text-gray-800 mt-4">Nutrición Vegana para Todos</h3>
             <p className="text-gray-600 mt-2">Conoce los fundamentos de la nutrición vegana y cómo implementarla en tu vida diaria.</p>
           </div>
