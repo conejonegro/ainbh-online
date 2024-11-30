@@ -17,10 +17,9 @@ export const metadata = {
 
 
 async function fetchCursos() {
-  const API_URL = process.env.NODE_ENV === 'production' 
-  ? process.env.NEXT_PUBLIC_API_URL 
-  : 'https://ainbh-online.vercel.app/';
-  const res = await fetch(`${API_URL}/api/cursos`);
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'; 
+
+  const res = await fetch(`${API_URL}/api/cursos`); 
   if (!res.ok) {
     throw new Error('Failed to fetch cursos');
   }
