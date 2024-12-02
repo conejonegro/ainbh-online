@@ -5,7 +5,7 @@ const nextConfig = {
      appDir: true, 
    },
    images: {
-     domains: ['picsum.photos', 'plchldr.co', "via.placeholder.com"], // Dominios permitidos para imágenes
+     domains: ['picsum.photos', 'plchldr.co', "via.placeholder.com", "firebasestorage.googleapis.com", "lh3.googleusercontent.com"], // Dominios permitidos para imágenes
    },
  };
  

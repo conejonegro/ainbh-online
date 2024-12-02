@@ -40,6 +40,8 @@ export default function PerfilUsuario() {
                 src={session?.user?.image || "https://via.placeholder.com/150"}
                 alt="Imagen de perfil"
                 className="rounded-full w-full h-full object-cover border-4 border-green-500"
+                width={200}
+                height={100}
               />
             </div>
             <h2 className="text-2xl font-semibold text-gray-800">{session?.user?.name}</h2>
@@ -47,7 +49,7 @@ export default function PerfilUsuario() {
           </div>
           <div className="md:w-2/3 md:pl-8">
             <h3 className="text-xl font-semibold text-gray-800">Información del Usuario</h3>
-            <p className="text-gray-600 mt-2">Aquí puedes actualizar tus datos y acceder a más opciones de configuración.</p>
+            <p className="text-gray-600 mt-2">Aquí puedes Confirmar tus datos y acceder a más opciones de configuración.</p>
           </div>
         </div>
 
@@ -59,13 +61,6 @@ export default function PerfilUsuario() {
             className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition duration-200"
           >
             Cerrar sesión
-          </button>
-
-          <button
-            type="button"
-            className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition duration-200"
-          >
-            Editar perfil
           </button>
         </div>
       </div>

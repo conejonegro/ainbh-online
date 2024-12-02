@@ -1,5 +1,6 @@
 import Link from "next/link";// app/home/page.js
 import Image from "next/image";
+import styles from "@/app/css/home/home.module.css"
 
 export const metadata = {
   title: "Inicio | AINBH",
@@ -16,7 +17,7 @@ export default function Home() {
   return (
     <div>
       {/* Sección Principal - Hero */}
-      <section className="relative h-screen bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 text-white flex items-center justify-center text-center">
+      <section className={`relative h-screen  text-white flex items-center justify-center text-center ${styles.banner}`}>
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="relative z-10">
           <h1 className="text-5xl font-extrabold mb-4">Bienvenidos a AINBH</h1>
@@ -38,7 +39,7 @@ export default function Home() {
             {/* Curso 1 */}
             <div className="bg-white p-6 rounded-lg shadow-lg">
               <Image
-                src="https://via.placeholder.com/300x200"
+                src="https://firebasestorage.googleapis.com/v0/b/cineclub-forever.appspot.com/o/course-1.png?alt=media"
                 alt="Curso 1"
                 className="w-full h-48 object-cover rounded-md mb-4"
                 width={300}
@@ -57,7 +58,7 @@ export default function Home() {
             {/* Curso 2 */}
             <div className="bg-white p-6 rounded-lg shadow-lg">
               <Image
-                src="https://via.placeholder.com/300x200"
+                src="https://firebasestorage.googleapis.com/v0/b/cineclub-forever.appspot.com/o/course-2.png?alt=media"
                 alt="Curso 2"
                 className="w-full h-48 object-cover rounded-md mb-4"
                 width={300}
@@ -76,7 +77,7 @@ export default function Home() {
             {/* Curso 3 */}
             <div className="bg-white p-6 rounded-lg shadow-lg">
               <Image
-                src="https://via.placeholder.com/300x200"
+                src="https://firebasestorage.googleapis.com/v0/b/cineclub-forever.appspot.com/o/course-3.png?alt=media"
                 alt="Curso 3"
                 className="w-full h-48 object-cover rounded-md mb-4"
                 width={300}
@@ -95,7 +96,7 @@ export default function Home() {
             {/* Curso 4 */}
             <div className="bg-white p-6 rounded-lg shadow-lg">
               <Image
-                src="https://via.placeholder.com/300x200"
+                src="https://firebasestorage.googleapis.com/v0/b/cineclub-forever.appspot.com/o/course-4.png?alt=media"
                 alt="Curso 4"
                 className="w-full h-48 object-cover rounded-md mb-4"
                 width={300}
