@@ -3,6 +3,7 @@
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function PerfilUsuario() {
   const { data: session, status } = useSession();
@@ -22,16 +23,18 @@ export default function PerfilUsuario() {
     });
   };
 
+  const userName = session.user.name;
+  const miCursoComprado = "mi-primer-curso"
+  console.log("miperfil", userName)
+
+  const userNameSlug = userName.replaceAll(" ", "-")
+
   return (
     <div className="bg-gray-100 min-h-screen py-12">
       <div className="max-w-4xl mx-auto px-6 bg-white rounded-lg shadow-lg p-8">
         {/* Encabezado de la página */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Perfil de Usuario</h1>
-          <p className="text-gray-600 mt-2">Detalles de tu cuenta</p>
-        </div>
+      
 
-        {/* Sección de imagen y detalles del usuario */}
         <div className="flex flex-col items-center md:flex-row md:items-start md:justify-between mb-8">
           <div className="flex flex-col items-center md:items-start md:w-1/3">
             <div className="relative w-32 h-32 mb-4">
@@ -48,13 +51,21 @@ export default function PerfilUsuario() {
             <p className="text-gray-500">{session?.user?.email}</p>
           </div>
           <div className="md:w-2/3 md:pl-8">
-            <h3 className="text-xl font-semibold text-gray-800">Información del Usuario</h3>
+            <h1 className="text-4xl font-semibold text-gray-800">Perfil de Usuario</h1>
             <p className="text-gray-600 mt-2">Aquí puedes Confirmar tus datos y acceder a más opciones de configuración.</p>
+            <div>
+              <h2 className="text-4xl mt-8 text-black font-bold">Tus Cursos:</h2>
+              <div>
+                <ul className="text-blue-950">
+                 <li className="ml-4 mt-2"> <Link href={`${process.env.NEXT_PUBLIC_API_URL}/perfil/${userNameSlug}/${miCursoComprado}`}> Vegana avanzada</Link></li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Botones de acción */}
-        <div className="flex justify-center mt-8 space-x-6">
+        <div className="flex justify-start mt-8 space-x-6">
           <button
             type="button"
             onClick={handleLogout}

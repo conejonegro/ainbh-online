@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 
 export default function Curso() {
   const [data, setData] = useState();
@@ -133,10 +134,10 @@ export default function Curso() {
             {/* Precio y botón de inscripción */}
             <div className="flex justify-between items-center mt-8">
               <span className="text-2xl font-bold text-gray-900">
-                ${data.price}
+                ${data.precio}
               </span>
               <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300">
-                Inscribirse al curso
+               <Link href="/checkout" > Inscribirse al curso</Link>
               </button>
             </div>
           </div>
