@@ -64,7 +64,7 @@ export default async function Cursos() {
                     <div className="flex justify-between items-center text-sm text-gray-500">
                       <p>{curso.duracion}</p>
                       <p className="font-bold text-green-500">
-                        Desde ${curso.precio}
+                        Desde: ${curso.precio}
                       </p>
                     </div>
                   </div>
