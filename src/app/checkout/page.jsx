@@ -1,51 +1,128 @@
 "use client";
 
-import { useState } from "react";
-import useForm from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import React, { useState } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  Elements,
+  CardElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
 
-const formSchema = z.object({
-  fullName: z
-    .string()
-    .min(2, { message: "El nombre debe tener al menos 2 caracteres." }),
-  email: z.string().email({ message: "Por favor, introduce un email válido." }),
-  address: z
-    .string()
-    .min(5, { message: "La dirección debe tener al menos 5 caracteres." }),
-  city: z
-    .string()
-    .min(2, { message: "La ciudad debe tener al menos 2 caracteres." }),
-  country: z.string().min(2, { message: "Por favor, selecciona un país." }),
-  cardNumber: z.string().regex(/^\d{16}$/, {
-    message: "El número de tarjeta debe tener 16 dígitos.",
-  }),
-  expiryDate: z.string().regex(/^(0[1-9]|1[0-2])\/\d{2}$/, {
-    message: "La fecha de expiración debe tener el formato MM/YY.",
-  }),
-  cvv: z
-    .string()
-    .regex(/^\d{3,4}$/, { message: "El CVV debe tener 3 o 4 dígitos." }),
-});
+// Cargar Stripe con la clave pública
+const stripePromise = loadStripe(
+  "pk_test_51QUzDIDZC923TJqPUleeo9KV41EkA6oIUXwcj42SQ4y5WvrulvUcYW6cNtmalsOtlOHsju8l65chHq23kBID80SD00HtpeKCyN"
+);
 
-export default function CheckoutPage() {
-  const [paymentMethod, setPaymentMethod] = useState("credit");
+function PaymentFormContent({ onPaymentSuccess }) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState(null);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    country: "",
+  });
 
-  /*  const { register, handleSubmit, formState: { errors } } = useForm({
-    resolver: zodResolver(formSchema)
-  }) */
-
-  const onSubmit = (data) => {
-    console.log(data);
-    // Aquí iría la lógica para procesar el pago
-  };
-
-  // Datos estáticos del curso
   const courseData = {
     title: "Fundamentos de la Nutrición Vegana",
     instructor: "Dra. María Rodríguez",
     duration: "8 semanas",
-    price: 99.99,
+    price: 1.99,
+  };
+
+  // Manejar cambios en los campos de entrada
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    // Validaciones
+    if (!stripe) {
+      console.error("Stripe no está inicializado");
+      setError("Stripe no está disponible");
+      return;
+    }
+
+    const cardElement = elements?.getElement(CardElement);
+
+    if (!cardElement) {
+      console.error("Elemento de tarjeta no encontrado");
+      setError("No se pudo obtener el elemento de la tarjeta");
+      return;
+    }
+
+    // Validar campos obligatorios
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.phone ||
+      !formData.country
+    ) {
+      setError("Por favor complete todos los campos");
+      return;
+    }
+
+    setIsProcessing(true);
+    setError(null);
+
+    try {
+      // Crea un PaymentIntent en el servidor
+      const res = await fetch("/api/payments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: courseData.price * 100, // Enviar monto en centavos
+          currency: "usd",
+          customerInfo: formData,
+        }),
+      });
+
+      const { clientSecret } = await res.json();
+
+      // Confirmar el pago
+      const { error, paymentIntent } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: {
+            card: cardElement,
+            billing_details: {
+              name: `${formData.firstName} ${formData.lastName}`,
+              email: formData.email,
+              phone: formData.phone,
+              address: {
+                country: formData.country,
+              },
+            },
+          },
+        }
+      );
+
+      if (error) {
+        console.error("Error de pago:", error);
+        setError(error.message);
+      } else if (paymentIntent.status === "succeeded") {
+        console.log("Pago exitoso:", paymentIntent);
+        onPaymentSuccess(formData); // Pasar información del cliente
+      }
+    } catch (err) {
+      console.error("Error en el proceso de pago:", err);
+      setError("Hubo un problema procesando el pago");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -62,9 +139,15 @@ export default function CheckoutPage() {
               <strong className="block text-green-700 mb-2">
                 Tu Seguridad, Nuestra Prioridad
               </strong>
-              Sabemos lo importante que es para ti sentirte seguro al realizar una compra en línea. Por eso, usamos lenguajes de programación modernos y adecuados que garantizan la máxima protección de tus datos. Además, trabajamos con plataformas de pago verificadas en México y reconocidas internacionalmente, asegurando que cada transacción sea 100% segura.
-
-              Queremos que tu experiencia de compra sea tranquila y sin preocupaciones. Puedes confiar en que tu información está protegida en cada paso. ¡Tu seguridad está en buenas manos con nosotros!
+              Sabemos lo importante que es para ti sentirte seguro al realizar
+              una compra en línea. Por eso, usamos lenguajes de programación
+              modernos y adecuados que garantizan la máxima protección de tus
+              datos. Además, trabajamos con plataformas de pago verificadas en
+              México y reconocidas internacionalmente, asegurando que cada
+              transacción sea 100% segura. Queremos que tu experiencia de compra
+              sea tranquila y sin preocupaciones. Puedes confiar en que tu
+              información está protegida en cada paso. ¡Tu seguridad está en
+              buenas manos con nosotros!
             </p>
           </div>
 
@@ -85,158 +168,175 @@ export default function CheckoutPage() {
             <p className="text-2xl font-bold">Total: ${courseData.price}</p>
           </div>
         </div>
-
-        {/* Formulario de checkout */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Información de Pago</h2>
-          <form className="space-y-6 p-6 bg-white shadow-md rounded-lg max-w-lg mx-auto">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="fullName"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Nombre Completo
-                </label>
-                <input
-                  id="fullName"
-                  type="text"
-                  placeholder="Ingresa tu nombre completo"
-                  className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Correo Electrónico
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  placeholder="tucorreo@ejemplo.com"
-                  className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-                />
-              </div>
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6 p-6 bg-white shadow-md rounded-lg max-w-lg mx-auto"
+        >
+          {/* Campos de información personal */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label
+                htmlFor="firstName"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Nombre
+              </label>
+              <input
+                type="text"
+                id="firstName"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="address"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Dirección
-                </label>
-                <input
-                  id="address"
-                  type="text"
-                  placeholder="Ingresa tu dirección"
-                  className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-                />
-              </div>
-              <div>
-                <div>
-                  <label
-                    htmlFor="city"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Ciudad
-                  </label>
-                  <input
-                    id="city"
-                    type="text"
-                    placeholder="Ciudad"
-                    className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-                  />
-                </div>
-              </div>
+            <div>
+              <label
+                htmlFor="lastName"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Apellido
+              </label>
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              />
             </div>
+          </div>
 
-            <fieldset>
-              <legend className="text-sm font-medium text-gray-700 mb-2">
-                Método de Pago
-              </legend>
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="credit"
-                    name="paymentMethod"
-                    value="credit"
-                    defaultChecked
-                    className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300"
-                  />
-                  <label
-                    htmlFor="credit"
-                    className="ml-3 block text-sm text-gray-700"
-                  >
-                    Tarjeta de Crédito
-                  </label>
-                </div>
-               
-              </div>
-            </fieldset>
-
-            {paymentMethod === "credit" && (
-              <>
-                <div>
-                  <label
-                    htmlFor="cardNumber"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Número de Tarjeta
-                  </label>
-                  <input
-                    id="cardNumber"
-                    type="text"
-                    placeholder="1234 5678 9012 3456"
-                    className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      htmlFor="expiryDate"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Fecha de Expiración (MM/YY)
-                    </label>
-                    <input
-                      id="expiryDate"
-                      type="text"
-                      placeholder="MM/YY"
-                      className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="cvv"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      CVV
-                    </label>
-                    <input
-                      id="cvv"
-                      type="text"
-                      placeholder="***"
-                      className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
-              </>
-            )}
-
-            <button
-              type="submit"
-              className="w-full py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
             >
-              Pagar ${courseData.price}
-            </button>
-          </form>
-        </div>
+              Correo Electrónico
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="phone"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Número de Teléfono
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
+              required
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="country"
+              className="block text-sm font-medium text-gray-700"
+            >
+              País
+            </label>
+            <select
+              id="country"
+              name="country"
+              value={formData.country}
+              onChange={handleInputChange}
+              required
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            >
+              <option value="">Selecciona un país</option>
+              <option value="US">Estados Unidos</option>
+              <option value="MX">México</option>
+              <option value="CA">Canadá</option>
+              <option value="ES">España</option>
+              <option value="AR">Argentina</option>
+              <option value="CO">Colombia</option>
+              <option value="CL">Chile</option>
+              <option value="PE">Perú</option>
+              <option value="BR">Brasil</option>
+              <option value="OTHER">Otro</option>
+            </select>
+          </div>
+
+          <div>
+            <label
+              htmlFor="cardNumber"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Número de Tarjeta
+            </label>
+            <CardElement
+              id="cardNumber"
+              options={{
+                style: {
+                  base: {
+                    fontSize: "16px",
+                    color: "#32325d",
+                    "::placeholder": {
+                      color: "#aab7c4",
+                    },
+                  },
+                },
+              }}
+            />
+          </div>
+
+          {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+
+          <button
+            type="submit"
+            disabled={!stripe || isProcessing}
+            className="w-full py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+          >
+            {isProcessing ? "Procesando..." : `Pagar $${courseData.price}`}
+          </button>
+        </form>
       </div>
+    </div>
+  );
+}
+
+export default function PaymentForm() {
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [customerInfo, setCustomerInfo] = useState(null);
+
+  return (
+    <div>
+      <Elements stripe={stripePromise}>
+        {paymentSuccess ? (
+          <div className="text-green-600 text-center p-4 bg-green-50 rounded-lg">
+            <h2 className="text-xl font-bold mb-2">¡Pago Exitoso!</h2>
+            <p>
+              Gracias, {customerInfo.firstName} {customerInfo.lastName}
+            </p>
+            <p>Ahora puedes ver tu Curso en tu Perfil {customerInfo.email}</p>
+          </div>
+        ) : (
+          <PaymentFormContent
+            onPaymentSuccess={(info) => {
+              setPaymentSuccess(true);
+              setCustomerInfo(info);
+            }}
+          />
+        )}
+      </Elements>
     </div>
   );
 }
