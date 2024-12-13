@@ -29,7 +29,7 @@ export default function Curso() {
   }, [parametros.slug]);
 
   if (loading) {
-    return <div className="text-center py-8">Cargando...</div>;
+    return <div className="text-center py-8 text-black">Cargando...</div>;
   }
 
   if (!data) {
@@ -137,7 +137,7 @@ export default function Curso() {
                 ${data.precio}
               </span>
               <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300">
-               <Link href="/checkout" > Inscribirse al curso</Link>
+               <Link href={`/checkout/${parametros.slug}`} > Inscribirse al curso</Link>
               </button>
             </div>
           </div>

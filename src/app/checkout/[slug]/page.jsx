@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect,  } from "react";
 import { loadStripe } from "@stripe/stripe-js";
+import { useParams } from "next/navigation";
 import {
   Elements,
   CardElement,
@@ -9,15 +10,20 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 
+//Fetch Data from API Server
+
+
 // Cargar Stripe con la clave pública
 const stripePromise = loadStripe(
   "pk_test_51QUzDIDZC923TJqPUleeo9KV41EkA6oIUXwcj42SQ4y5WvrulvUcYW6cNtmalsOtlOHsju8l65chHq23kBID80SD00HtpeKCyN"
 );
 
-function PaymentFormContent({ onPaymentSuccess }) {
+ function PaymentFormContent({ onPaymentSuccess }) {
   const stripe = useStripe();
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [dataFromNextAPI, setdataFromNextAPI] = useState();
+  const [myFoundCourse, setMyFoundCourse] = useState();
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -27,12 +33,28 @@ function PaymentFormContent({ onPaymentSuccess }) {
     country: "",
   });
 
-  const courseData = {
-    title: "Fundamentos de la Nutrición Vegana",
-    instructor: "Dra. María Rodríguez",
-    duration: "8 semanas",
-    price: 1.99,
-  };
+  const UrlParams = useParams();
+
+  useEffect(() => {
+   async function fetchCursos() {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+    
+      const res = await fetch(`${API_URL}/api/cursos`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch cursos");
+      }
+      //setdataFromNextAPI(res.json());
+      const dataFronNExtAPI = await res.json();
+
+      setdataFromNextAPI(dataFronNExtAPI)
+      
+    }
+   fetchCursos()
+   
+  },[])
+
+  const myCourseData = dataFromNextAPI?.find((mycourse) => mycourse.slug === UrlParams.slug)
+
 
   // Manejar cambios en los campos de entrada
   const handleInputChange = (e) => {
@@ -84,7 +106,7 @@ function PaymentFormContent({ onPaymentSuccess }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: courseData.price * 100, // Enviar monto en centavos
+          amount: myCourseData.precio * 100, // Enviar monto en centavos
           currency: "usd",
           customerInfo: formData,
         }),
@@ -125,6 +147,9 @@ function PaymentFormContent({ onPaymentSuccess }) {
     }
   };
 
+
+  console.log( "hubo", myCourseData)
+
   return (
     <div className="container mx-auto px-4 py-8 text-black">
       <h1 className="text-3xl font-bold mb-6 text-center text-green-700">
@@ -155,17 +180,17 @@ function PaymentFormContent({ onPaymentSuccess }) {
           <h2 className="text-xl font-semibold mb-4">Resumen del Curso</h2>
           <div className="space-y-2">
             <p>
-              <span className="font-medium">Curso:</span> {courseData.title}
+              <span className="font-medium">Curso:</span> {myCourseData?.name}
             </p>
             <p>
               <span className="font-medium">Instructor:</span>{" "}
-              {courseData.instructor}
+              {myCourseData?.maestro}
             </p>
             <p>
               <span className="font-medium">Duración:</span>{" "}
-              {courseData.duration}
+              {myCourseData?.duracion}
             </p>
-            <p className="text-2xl font-bold">Total: ${courseData.price}</p>
+            <p className="text-2xl font-bold">Total: ${myCourseData?.precio}</p>
           </div>
         </div>
         <form
@@ -305,7 +330,7 @@ function PaymentFormContent({ onPaymentSuccess }) {
             disabled={!stripe || isProcessing}
             className="w-full py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
           >
-            {isProcessing ? "Procesando..." : `Pagar $${courseData.price}`}
+            {isProcessing ? "Procesando..." : `Pagar $${myCourseData?.precio}`}
           </button>
         </form>
       </div>
