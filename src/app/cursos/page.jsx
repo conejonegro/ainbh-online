@@ -1,31 +1,38 @@
+"use client"
+
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { getFirestore, doc, getDoc, collection, getDocs } from "firebase/firestore";
+import { app } from "@/lib/firebase";
 
-export const metadata = {
-  title: "Cursos | AINBH",
-  description:
-    "Conoce más sobre nuestros cursos, enfocados en una nutrición vegana saludable y sostenible.",
-  openGraph: {
-    title: "Cursos | AINBH",
-    description:
-      "Explora nuestra oferta educativa sobre nutrición y cocina vegana.",
-    url: "https://tu-sitio.com/cursos",
-    siteName: "AINBH",
-  },
-};
 
-async function fetchCursos() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+export default function Cursos() {
+  const [cursos, setCursos] = useState([]);
 
-  const res = await fetch(`${API_URL}/api/cursos`);
-  if (!res.ok) {
-    throw new Error("Failed to fetch cursos");
-  }
-  return res.json();
-}
+  useEffect(() => {
 
-export default async function Cursos() {
-  const cursos = await fetchCursos(); // Obtener los datos de los cursos directamente en el servidor
+    async function fetchCursos(){
+        const db = getFirestore(app);
+        const cursosRef = collection(db, "cursos");
+        const cursosSnap = await getDocs(cursosRef);
+   
+     // Filtramos solo los que están permitidos para este usuario
+        const cursos = cursosSnap.docs
+        console.log("cursosUsuario", cursos)
+        const CursosReales = cursos.map(doc => {
+          console.log("datos", doc.data())
+          return (doc.data())
+        });
+        console.log("CursosReales", CursosReales)
+        setCursos(CursosReales);
+    }
+   
+     fetchCursos();
+   
+   }, [])
+
+
 
   return (
     <div className="bg-gray-100 py-16">
@@ -44,7 +51,7 @@ export default async function Cursos() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {cursos.length > 0 ? (
             cursos.map((curso) => (
-              <Link href={`/curso/${curso.slug}`} key={curso.id}>
+              <Link href={`/curso/${curso.slug}`} key={curso.slug}>
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-all transform hover:scale-105 hover:shadow-xl">
                   <div className="relative"></div>
                   <div className="p-6">

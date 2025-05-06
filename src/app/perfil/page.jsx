@@ -4,9 +4,60 @@ import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import useRegistrarUsuario from "@/hooks/useRegistrarUsuario";
+import { useEffect,useState } from "react";
+import { getFirestore, doc, getDoc, collection, getDocs } from "firebase/firestore";
+import { app } from "@/lib/firebase";
 
 export default function PerfilUsuario() {
   const { data: session, status } = useSession();
+  const [cursos, setCursos] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  console.log("session", session)
+
+  useEffect(() => {
+    if (status !== "authenticated") return;
+
+    const fetchCursosPermitidos = async () => {
+      try {
+        const db = getFirestore(app);
+        const userRef = doc(db, "users", session.user.email);
+        const userSnap = await getDoc(userRef);
+
+        console.log("userSnap", userSnap)
+
+        if (!userSnap.exists()) {
+          console.warn("Usuario no encontrado en Firestore.");
+          return;
+        }
+
+        const { cursosPermitidos } = userSnap.data();
+
+        // Ahora consultamos TODOS los cursos disponibles
+        const cursosRef = collection(db, "cursos");
+        const cursosSnap = await getDocs(cursosRef);
+
+        // Filtramos solo los que están permitidos para este usuario
+        const cursosUsuario = cursosSnap.docs
+          .map(doc => doc.data())
+          .filter(curso => cursosPermitidos.includes(curso.slug));
+
+        setCursos(cursosUsuario);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error al cargar los cursos:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchCursosPermitidos();
+  }, [session, status]);
+
+  console.log("Cursos usuario", cursos)
+
+// Uso de Hook personalizado para registrar al usuario en Firestore al iniciar sesión 
+  useRegistrarUsuario();
 
   if (status === "loading") {
     return <div>Loading...</div>;
@@ -15,6 +66,9 @@ export default function PerfilUsuario() {
   if (status === "unauthenticated") {
     return <div>No estás autenticado. Por favor inicia sesión.</div>;
   }
+
+  // Traer Cursos Permitidos por usuario
+
 
   const handleLogout = () => {
     signOut({
@@ -57,7 +111,14 @@ export default function PerfilUsuario() {
               <h2 className="text-4xl mt-8 text-black font-bold">Tus Cursos:</h2>
               <div>
                 <ul className="text-blue-950">
-                 <li className="ml-4 mt-2"> <Link href={`${process.env.NEXT_PUBLIC_API_URL}/perfil/${userNameSlug}/${miCursoComprado}`}> Vegana avanzada</Link></li>
+                  {cursos.map((curso, index) => (
+                    <li key={index} className="ml-4 mt-2">
+                      <Link href={`${process.env.NEXT_PUBLIC_API_URL}/perfil/${userNameSlug}/${curso.slug}`}>
+                        {curso.nombre}
+                      </Link>
+                    </li>
+                  ))}
+          
                 </ul>
               </div>
             </div>

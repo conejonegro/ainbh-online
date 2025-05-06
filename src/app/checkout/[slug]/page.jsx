@@ -35,16 +35,24 @@ const stripePromise = loadStripe(
 
   const UrlParams = useParams();
 
+  console.log("UrlParams", UrlParams);
+
+  const isLocalhost = window.location.origin.includes("localhost:3000");
+  const API_URL = isLocalhost
+    ? "http://localhost:3000"
+    : process.env.NEXT_PUBLIC_API_URL;
+
   useEffect(() => {
    async function fetchCursos() {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+      
     
-      const res = await fetch(`${API_URL}/api/cursos`);
+      const res = await fetch(`${API_URL}/api/cursos/`);
       if (!res.ok) {
         throw new Error("Failed to fetch cursos");
       }
       //setdataFromNextAPI(res.json());
       const dataFronNExtAPI = await res.json();
+      console.log("dataFronNExtAPI", dataFronNExtAPI);
 
       setdataFromNextAPI(dataFronNExtAPI)
       
@@ -54,6 +62,8 @@ const stripePromise = loadStripe(
   },[])
 
   const myCourseData = dataFromNextAPI?.find((mycourse) => mycourse.slug === UrlParams.slug)
+
+  console.log("myCourseData", myCourseData);
 
 
   // Manejar cambios en los campos de entrada
