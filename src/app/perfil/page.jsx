@@ -22,6 +22,14 @@ export default function PerfilUsuario() {
 
   console.log("session", session)
 
+  const baseURL =
+  process.env.NODE_ENV === "development"
+    ? process.env.NEXT_PUBLIC_API_URL_LOCAL
+    : process.env.NEXT_PUBLIC_API_URL;
+
+    console.log("baseURL", baseURL)
+
+
   useEffect(() => {
     if (status !== "authenticated") return;
 
@@ -119,7 +127,7 @@ export default function PerfilUsuario() {
                 <ul className="text-blue-950">
                   {cursos.map((curso, index) => (
                     <li key={index} className="ml-4 mt-2">
-                      <Link href={`${process.env.NEXT_PUBLIC_API_URL}/perfil/${userNameSlug}/${curso.slug}`}>
+                      <Link href={`/perfil/${userNameSlug}/${curso.slug}`}>
                         {curso.nombre}
                       </Link>
                     </li>
