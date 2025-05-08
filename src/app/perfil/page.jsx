@@ -9,6 +9,12 @@ import { useEffect,useState } from "react";
 import { getFirestore, doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { app } from "@/lib/firebase";
 
+
+//######
+// AQUI SE USA LA FUNCION PARA REGISTRAR AL USUARIO EN FIRESTORE
+// useRegistrarUsuario()
+//######
+
 export default function PerfilUsuario() {
   const { data: session, status } = useSession();
   const [cursos, setCursos] = useState([]);

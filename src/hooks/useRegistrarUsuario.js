@@ -22,6 +22,7 @@ export default function useRegistrarUsuario() {
           await setDoc(userRef, {
             email: session.user.email,
             nombre: session.user.name || "",
+            role: "user",
             cursosPermitidos: [],
           });
           console.log("✅ Usuario registrado en Firestore");
