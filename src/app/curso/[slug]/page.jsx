@@ -99,11 +99,11 @@ export default function CursoPage() {
 
             <div className="flex justify-between items-center mt-8">
               <span className="text-2xl font-bold text-gray-900">${data.precio}</span>
-              <Link href={`/checkout/${slug}`}>
+             {/* <Link href={`/checkout/${slug}`}>
                 <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300">
                   Inscribirse al curso
                 </button>
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>
